@@ -15,9 +15,9 @@ class DefaultScene extends Phaser.Scene {
         this.score = 0;
         this.gameOver = false;
 
-        Array.from({length: 5}, (_, i) => {
-            this.load.image(`stage${i + 1}`, `assets/stage${i + 1}.png`);
-            this.load.image(`ground${i + 1}`, `assets/stage${i + 1}ground.png`);
+        Array.from({length: 9}, (_, i) => {
+            this.load.image(`stage${i}`, `assets/stage${i}.png`);
+            this.load.image(`ground${i}`, `assets/stage${i}ground.png`);
         });
 
         this.load.image('polaroid', 'assets/polaroid.png');
@@ -26,6 +26,8 @@ class DefaultScene extends Phaser.Scene {
         this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 200, frameHeight: 300 });
         this.load.spritesheet('enermy', 'assets/enermy.png', { frameWidth: 200, frameHeight: 300 });
+
+        const backdrop = this.load.image('backdrop', 'assets/backdrop.png');
     }
 
     create () {
@@ -104,7 +106,7 @@ class DefaultScene extends Phaser.Scene {
             });
         }
         this.polaroid = this.add.image(800, 520, 'polaroid');
-        this.polaroid.setScale(1 - 0.1 * currentStage);
+        this.polaroid.setScale(1 - 0.05 * currentStage);
         // this.polaroid.setAlpha(0.5);
 
         //  Input Events
@@ -206,10 +208,16 @@ class DefaultScene extends Phaser.Scene {
 
     checkPicture (player, polaroid) {
         const intersect = Phaser.Geom.Intersects.RectangleToRectangle(player.getBounds(), polaroid.getBounds());
-        if (!this.count && intersect && currentStage < 5) {
+        if (!this.count && intersect && currentStage < 9) {
             this.clearSecondInterval();
             currentStage += 1;
             gotoNextStage();
+        } else {
+            const backdrop = this.add.image(800, 450, 'backdrop');
+            backdrop.alpha = 0.9;
+            this.add.text(450, 400, 'Game Over', { fontSize: '128px', fill: '#000' });
+            this.countText.setText('');
+            this.gameOver = true;
         }
     }
 
